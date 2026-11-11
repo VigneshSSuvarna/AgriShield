@@ -1,12 +1,74 @@
 
+
 export const sensors = [
-  { key: 'nitrogen', label: 'Nitrogen (N)', min: 0, max: 140, step: 1, defaultValue: 50 },
-  { key: 'phosphorus', label: 'Phosphorus (P)', min: 0, max: 145, step: 1, defaultValue: 50 },
-  { key: 'potassium', label: 'Potassium (K)', min: 0, max: 205, step: 1, defaultValue: 50 },
-  { key: 'temperature', label: 'Temperature', min: 0, max: 50, step: 1, defaultValue: 25, unit: '°C' },
-  { key: 'humidity', label: 'Humidity', min: 0, max: 100, step: 1, defaultValue: 60, unit: '%' },
-  { key: 'ph', label: 'Soil pH', min: 0, max: 14, step: 0.1, defaultValue: 6.5 },
-  { key: 'moisture', label: 'Soil Moisture', min: 0, max: 100, step: 1, defaultValue: 40, unit: '%' },
+  {
+    key: 'N',
+    label: 'Nitrogen (N)',
+    min: 0,
+    max: 140,
+    step: 1,
+    defaultValue: 50
+  },
+  {
+    key: 'P',
+    label: 'Phosphorus (P)',
+    min: 0,
+    max: 145,
+    step: 1,
+    defaultValue: 50
+  },
+  {
+    key: 'K',
+    label: 'Potassium (K)',
+    min: 0,
+    max: 205,
+    step: 1,
+    defaultValue: 50
+  },
+  {
+    key: 'Temp',
+    label: 'Temperature',
+    min: 0,
+    max: 50,
+    step: 1,
+    defaultValue: 25,
+    unit: '°C'
+  },
+  {
+    key: 'Humidity',
+    label: 'Humidity',
+    min: 0,
+    max: 100,
+    step: 1,
+    defaultValue: 60,
+    unit: '%'
+  },
+  {
+    key: 'Soil_pH',
+    label: 'Soil pH',
+    min: 0,
+    max: 14,
+    step: 0.1,
+    defaultValue: 6.5
+  },
+  {
+    key: 'Moisture',
+    label: 'Soil Moisture',
+    min: 0,
+    max: 100,
+    step: 1,
+    defaultValue: 40,
+    unit: '%'
+  },
+  {
+    key: 'Rainfall',
+    label: 'Rainfall',
+    min: 0,
+    max: 300,
+    step: 1,
+    defaultValue: 100,
+    unit: 'mm'
+  }
 ]
 
 function SensorForm({ values, onChange }) {
