@@ -1,0 +1,10 @@
+label,test,train,validation,class_weight
+Corn_(maize)___Common_rust_,179,834,179,0.9316546762589928
+Corn_(maize)___Northern_Leaf_Blight,147,690,148,1.126086956521739
+Corn_(maize)___healthy,174,813,175,0.955719557195572
+Potato___Early_blight,150,700,150,1.11
+Potato___Late_blight,150,700,150,1.11
+Potato___healthy,23,106,23,7.330188679245283
+Tomato___Early_blight,150,700,150,1.11
+Tomato___Late_blight,287,1336,286,0.5815868263473054
+Tomato___healthy,239,1114,238,0.6974865350089766

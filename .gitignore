@@ -1,0 +1,24 @@
+﻿# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+venv/
+.venv/
+
+# Raw dataset
+data/raw/
+
+# VS Code
+.vscode/
+
+# Keep only the model used by the API
+models/*.keras
+!models/best_agri_finetuned.keras
+
+# Temporary analysis files
+data/processed/tomato_errors.csv
+data/processed/tomato_error_samples.png
+
+# Temporary files
+.DS_Store
