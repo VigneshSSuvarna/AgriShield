@@ -1,148 +1,137 @@
 
 import { useState } from 'react'
-import SensorForm, { sensors } from './components/SensorForm'
-import ChoiceToggles from './components/ChoiceToggles'
+import Navbar from './components/Navbar'
+import Home from './pages/Home'
+import Detection from './pages/Detection'
+import Results from './pages/Results'
+import DiseaseInfo from './pages/DiseaseInfo'
+import { predictLeafDisease } from './services/api'
 
 function App() {
-  // Store the seven sensor readings
-  const [values, setValues] = useState(
-    Object.fromEntries(
-      sensors.map(sensor => [
-        sensor.key,
-        sensor.defaultValue
-      ])
-    )
+  const [page, setPage] = useState('home')
+  const [selectedImage, setSelectedImage] = useState(null)
+  const [prediction, setPrediction] = useState(null)
+  const [demoMode, setDemoMode] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  // True only when an image API endpoint is configured
+  const backendReady = Boolean(
+    import.meta.env.VITE_PREDICT_ENDPOINT
   )
 
-  // Store selected farming actions
-  const [selectedActions, setSelectedActions] = useState([])
+  function navigateTo(newPage) {
+    if (newPage !== 'results') {
+      setSelectedImage(null)
+      setPrediction(null)
+    }
 
-  // Store form submission result
-  const [result, setResult] = useState(null)
-
-  // Update the value of a sensor
-  function updateSensor(key, value) {
-    setValues(previous => ({
-      ...previous,
-      [key]: Number(value)
-    }))
-
-    setResult(null)
+    setError('')
+    setPage(newPage)
+    window.scrollTo(0, 0)
   }
 
-  // Select or deselect a farming action
-  function toggleAction(key) {
-    setSelectedActions(previous =>
-      previous.includes(key)
-        ? previous.filter(action => action !== key)
-        : [...previous, key]
-    )
+  // Request a real prediction from the backend
+  async function handleDetection(image) {
+    if (!image || isLoading) return
 
-    setResult(null)
-  }
+    setError('')
+    setIsLoading(true)
 
-  // Validate and collect form inputs
-  function handleSubmit(event) {
-    event.preventDefault()
+    try {
+      const result = await predictLeafDisease(image)
 
-    const valid = sensors.every(sensor => {
-      const value = values[sensor.key]
+      if (
+        !result ||
+        typeof result.prediction !== 'string' ||
+        !result.prediction.trim() ||
+        result.confidence == null ||
+        !Number.isFinite(Number(result.confidence))
+      ) {
+        throw new Error(
+          'The backend returned an incomplete prediction.'
+        )
+      }
 
-      return (
-        Number.isFinite(value) &&
-        value >= sensor.min &&
-        value <= sensor.max
+      setSelectedImage(image)
+      setPrediction(result)
+      setDemoMode(false)
+      setPage('results')
+      window.scrollTo(0, 0)
+
+    } catch (err) {
+      setError(
+        err.message || 'Unable to analyze the image.'
       )
-    })
 
-    if (!valid) {
-      alert('Please check your sensor readings.')
-      return
+    } finally {
+      setIsLoading(false)
     }
+  }
 
-    const formData = {
-      ...values,
-      planned_actions: selectedActions
-    }
+  // Open results with clearly labelled sample data
+  function handleDemo(image) {
+    if (!image || isLoading) return
 
-    console.log('Form data:', formData)
-
-    setResult(formData)
+    setSelectedImage(image)
+    setPrediction(null)
+    setDemoMode(true)
+    setError('')
+    setPage('results')
+    window.scrollTo(0, 0)
   }
 
   return (
-    <div className="min-h-screen bg-emerald-50 px-4 py-10 text-slate-800">
-      <main className="mx-auto max-w-4xl">
+    <div className="flex min-h-screen flex-col bg-slate-50 text-slate-800">
 
-        {/* Header */}
-        <header className="mb-8 text-center">
-          <div className="mb-3 text-5xl">🌱</div>
+      <Navbar
+        page={page === 'results' ? 'detection' : page}
+        setPage={navigateTo}
+      />
 
-          <h1 className="text-4xl font-bold text-emerald-800">
-            AgriShield
-          </h1>
+      <div className="flex-1">
 
-          <p className="mt-3 text-slate-600">
-            Crop Health and Pest Expert System
-          </p>
-
-          <p className="mt-1 text-sm text-slate-500">
-            Enter soil and environmental readings
-            to begin an assessment.
-          </p>
-        </header>
-
-        {/* Main Input Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-
-          {/* Sensor Sliders */}
-          <SensorForm
-            values={values}
-            onChange={updateSensor}
-          />
-
-          {/* Farming Action Checkboxes */}
-          <ChoiceToggles
-            selectedActions={selectedActions}
-            onToggle={toggleAction}
-          />
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full rounded-xl bg-emerald-700 px-6 py-4 font-semibold text-white hover:bg-emerald-800"
-          >
-            Check Inputs
-          </button>
-        </form>
-
-        {/* Form Submission Result */}
-        {result && (
-          <section className="mt-6 rounded-2xl bg-white p-6 shadow-sm">
-
-            <h2 className="mb-3 text-xl font-semibold text-emerald-800">
-              Form Data Collected
-            </h2>
-
-            <p className="mb-4 text-sm text-slate-600">
-              Sensor values and planned actions have
-              been collected successfully.
-              Backend diagnosis is not connected yet.
-            </p>
-
-            <pre className="overflow-x-auto rounded-xl bg-slate-100 p-4 text-sm">
-              {JSON.stringify(result, null, 2)}
-            </pre>
-
-          </section>
+        {page === 'home' && (
+          <Home setPage={navigateTo} />
         )}
 
-        {/* Footer */}
-        <footer className="mt-8 text-center text-sm text-slate-500">
-          AgriShield • Crop Health & Pest Expert System
-        </footer>
+        {page === 'detection' && (
+          <Detection
+            onDetect={handleDetection}
+            onPreviewDemo={handleDemo}
+            isLoading={isLoading}
+            error={error}
+            backendReady={backendReady}
+          />
+        )}
 
-      </main>
+        {page === 'results' && (
+          <Results
+            image={selectedImage}
+            prediction={prediction}
+            isDemo={demoMode}
+            setPage={navigateTo}
+          />
+        )}
+
+        {page === 'diseases' && (
+          <DiseaseInfo />
+        )}
+
+      </div>
+
+      <footer className="mt-10 border-t border-emerald-100 bg-white px-6 py-6 text-center">
+        <p className="font-semibold text-emerald-900">
+          AgriShield
+        </p>
+        <p className="mt-1 text-sm text-slate-500">
+          Crop Health and Pest Expert System
+        </p>
+        <p className="mt-2 text-xs text-slate-400">
+          AI-Powered Crop Disease Detection
+        </p>
+      </footer>
+
     </div>
   )
 }
