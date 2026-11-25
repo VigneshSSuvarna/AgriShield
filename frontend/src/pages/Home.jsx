@@ -1,5 +1,5 @@
+
 import {
-  CropIllustration,
   HeroBotanicalSpecimen,
 } from '../components/BotanicalIcons'
 
@@ -7,14 +7,17 @@ const crops = [
   {
     name: 'Tomato',
     diseases: 'Early Blight and Late Blight',
+    image: '/images/tomato_healthy.JPG',
   },
   {
     name: 'Potato',
     diseases: 'Early Blight and Late Blight',
+    image: '/images/potato_healthy.JPG',
   },
   {
     name: 'Corn',
     diseases: 'Common Rust and Northern Leaf Blight',
+    image: '/images/corn_healthy.jpg',
   },
 ]
 
@@ -81,27 +84,32 @@ function Home({ setPage }) {
 
       {/* Clean data strip */}
       <section className="grid divide-y divide-rule border-b border-rule sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+
         <div className="py-4 sm:px-6 sm:first:pl-0">
           <span className="font-mono text-sm font-medium text-ink">
             3 Supported Crops
           </span>
         </div>
+
         <div className="py-4 sm:px-6">
           <span className="font-mono text-sm font-medium text-ink">
             9 Classification Categories
           </span>
         </div>
+
         <div className="py-4 sm:px-6 sm:last:pr-0">
           <span className="font-mono text-sm font-medium text-ink">
             Image-Based Detection
           </span>
         </div>
+
       </section>
 
       {/* Supported crops */}
       <section className="mt-14 sm:mt-16">
 
         <div className="flex flex-col justify-between gap-2 border-b border-rule pb-4 sm:flex-row sm:items-end">
+
           <h2 className="font-serif text-3xl font-semibold text-ink">
             Supported Crops
           </h2>
@@ -109,6 +117,7 @@ function Home({ setPage }) {
           <p className="text-sm text-ink-muted">
             Explore the crops supported by AgriShield.
           </p>
+
         </div>
 
         <div className="mt-6 grid divide-y divide-rule rounded-lg border border-rule bg-card md:grid-cols-3 md:divide-x md:divide-y-0">
@@ -118,9 +127,19 @@ function Home({ setPage }) {
               key={crop.name}
               className="flex flex-col justify-between p-6 sm:p-7"
             >
+
               <div>
-                <div className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded border border-rule bg-paper text-ink">
-                  <CropIllustration crop={crop.name} className="h-9 w-9" />
+
+                {/* Healthy crop photograph */}
+                <div className="mb-5 overflow-hidden rounded border border-rule bg-paper-alt">
+
+                  <img
+                    src={crop.image}
+                    alt={`Healthy ${crop.name.toLowerCase()} leaves`}
+                    className="h-40 w-full object-cover"
+                    loading="lazy"
+                  />
+
                 </div>
 
                 <h3 className="font-serif text-2xl font-semibold text-ink">
@@ -130,15 +149,18 @@ function Home({ setPage }) {
                 <p className="mt-2 text-sm leading-relaxed text-ink-muted">
                   {crop.diseases}
                 </p>
+
               </div>
 
               <p className="mt-6 border-t border-rule pt-3 font-mono text-xs text-healthy">
                 1 healthy class · 2 disease classes
               </p>
+
             </article>
           ))}
 
         </div>
+
       </section>
 
       {/* Workflow */}
@@ -155,16 +177,20 @@ function Home({ setPage }) {
               key={step.number}
               className="relative border-l border-rule pl-6 md:border-l-0 md:border-t md:pl-0 md:pt-6"
             >
+
               <div className="flex items-baseline gap-3">
+
                 <span className="font-serif text-3xl font-semibold text-accent">
                   {step.number}
                 </span>
+
                 {index < steps.length - 1 && (
                   <span
                     className="hidden h-px flex-1 bg-rule md:block"
                     aria-hidden="true"
                   />
                 )}
+
               </div>
 
               <h3 className="mt-3 font-serif text-xl font-semibold text-ink">
@@ -174,10 +200,12 @@ function Home({ setPage }) {
               <p className="mt-2 text-sm leading-relaxed text-ink-muted">
                 {step.description}
               </p>
+
             </article>
           ))}
 
         </div>
+
       </section>
 
     </main>
