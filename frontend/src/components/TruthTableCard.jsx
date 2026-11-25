@@ -1,4 +1,3 @@
-
 import { useState } from 'react'
 
 function TruthTableCard({
@@ -29,95 +28,104 @@ function TruthTableCard({
   }
 
   return (
-    <section className="mt-6 rounded-3xl border border-emerald-100 bg-white p-6 shadow-sm">
+    <section className="mt-8 rounded-lg border border-rule bg-card p-5 sm:p-8">
 
-      <h2 className="text-xl font-bold text-emerald-900">
-        Truth Table Matrix Viewer
-      </h2>
+      <div className="border-b border-rule pb-4">
+        <h2 className="font-serif text-xl font-semibold text-ink sm:text-2xl">
+          Truth Table Matrix Viewer
+        </h2>
 
-      <p className="mt-2 text-sm text-slate-600">
-        This table demonstrates the logical rule used to check
-        whether the conditions for spraying are satisfied.
-      </p>
-
-      <div className="mt-5 rounded-xl bg-slate-50 p-4">
-        <p className="text-sm font-semibold text-slate-700">
-          Logical Expression
+        <p className="mt-1.5 text-sm text-ink-muted">
+          This table demonstrates the logical rule used to check
+          whether the conditions for spraying are satisfied.
         </p>
+      </div>
 
-        <p className="mt-2 text-lg font-bold text-emerald-800">
-          Spray = D AND NOT R
-        </p>
+      <div className="mt-5 flex flex-col justify-between gap-4 rounded border border-rule bg-paper-alt/60 p-4 sm:flex-row sm:items-center">
+        <div>
+          <p className="font-mono text-xs uppercase tracking-wider text-ink-faint">
+            Logical Expression
+          </p>
 
-        <p className="mt-2 text-sm text-slate-600">
-          D = Disease Detected
-        </p>
+          <p className="mt-1 font-mono text-base font-semibold text-ink sm:text-lg">
+            Spray = D AND NOT R
+          </p>
+        </div>
 
-        <p className="text-sm text-slate-600">
-          R = Rain Expected
-        </p>
+        <div className="flex flex-wrap gap-x-6 gap-y-1 font-mono text-xs text-ink-muted">
+          <p>D = Disease Detected</p>
+          <p>R = Rain Expected</p>
+        </div>
       </div>
 
       {/* Interactive scenario inputs */}
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+      <div className="mt-6 grid gap-3 sm:grid-cols-2">
 
-        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 p-4">
-          <input
-            type="checkbox"
-            checked={diseaseDetected}
-            onChange={(event) =>
-              setDiseaseDetected(event.target.checked)
-            }
-            className="h-5 w-5 accent-emerald-700"
-          />
-
-          <span className="text-sm font-medium text-slate-700">
+        <label className="flex cursor-pointer items-center justify-between gap-4 rounded border border-rule bg-paper p-4 transition-colors duration-150 hover:border-rule-strong">
+          <span className="text-sm font-medium text-ink">
             Disease Detected (D)
+          </span>
+
+          <span className="relative inline-flex items-center">
+            <input
+              type="checkbox"
+              checked={diseaseDetected}
+              onChange={(event) =>
+                setDiseaseDetected(event.target.checked)
+              }
+              className="peer sr-only"
+            />
+            <span className="h-6 w-11 rounded-full border border-rule-strong bg-paper-alt transition-colors duration-200 peer-checked:border-accent peer-checked:bg-accent peer-focus-visible:ring-2 peer-focus-visible:ring-accent peer-focus-visible:ring-offset-2" />
+            <span className="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-card transition-transform duration-200 peer-checked:translate-x-5" />
           </span>
         </label>
 
-        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 p-4">
-          <input
-            type="checkbox"
-            checked={rainExpected}
-            onChange={(event) =>
-              setRainExpected(event.target.checked)
-            }
-            className="h-5 w-5 accent-emerald-700"
-          />
-
-          <span className="text-sm font-medium text-slate-700">
+        <label className="flex cursor-pointer items-center justify-between gap-4 rounded border border-rule bg-paper p-4 transition-colors duration-150 hover:border-rule-strong">
+          <span className="text-sm font-medium text-ink">
             Rain Expected (R)
+          </span>
+
+          <span className="relative inline-flex items-center">
+            <input
+              type="checkbox"
+              checked={rainExpected}
+              onChange={(event) =>
+                setRainExpected(event.target.checked)
+              }
+              className="peer sr-only"
+            />
+            <span className="h-6 w-11 rounded-full border border-rule-strong bg-paper-alt transition-colors duration-200 peer-checked:border-accent peer-checked:bg-accent peer-focus-visible:ring-2 peer-focus-visible:ring-accent peer-focus-visible:ring-offset-2" />
+            <span className="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-card transition-transform duration-200 peer-checked:translate-x-5" />
           </span>
         </label>
 
       </div>
 
-      <p className="mt-3 text-xs text-slate-500">
+      <p className="mt-2.5 text-xs text-ink-faint">
         Change either checkbox to explore the truth table.
         These are example conditions, not live weather data.
       </p>
 
       {/* Truth table */}
-      <div className="mt-6 overflow-x-auto rounded-xl border border-slate-200">
+      <div className="mt-6 overflow-x-auto rounded border border-rule">
 
         <table className="w-full min-w-[440px] border-collapse text-left text-sm">
 
-          <thead className="bg-emerald-900 text-white">
+          <thead className="border-b border-rule bg-paper-alt">
             <tr>
-              <th className="px-4 py-4">
+              <th className="px-4 py-3 font-mono text-xs font-semibold uppercase tracking-wider text-ink">
                 Disease (D)
               </th>
 
-              <th className="px-4 py-4">
+              <th className="px-4 py-3 font-mono text-xs font-semibold uppercase tracking-wider text-ink">
                 Rain (R)
               </th>
 
-              <th className="px-4 py-4">
+              <th className="px-4 py-3 font-mono text-xs font-semibold uppercase tracking-wider text-ink">
                 D AND NOT R
               </th>
 
-              <th className="px-4 py-4">
+              <th className="px-4 py-3 font-mono text-xs font-semibold uppercase tracking-wider text-ink">
                 Active
               </th>
             </tr>
@@ -130,34 +138,40 @@ function TruthTableCard({
 
               const rowColor = active
                 ? allowed
-                  ? 'bg-green-100 text-green-900'
-                  : 'bg-red-100 text-red-900'
-                : 'bg-white text-slate-700'
+                  ? 'bg-healthy-soft text-ink font-medium'
+                  : 'bg-disease-soft text-ink font-medium'
+                : 'bg-card text-ink-muted'
 
               return (
                 <tr
                   key={index}
-                  className={`border-t border-slate-200 ${rowColor}`}
+                  className={`border-t border-rule transition-colors duration-150 ${rowColor}`}
                 >
-                  <td className="px-4 py-4 font-medium">
+                  <td className="px-4 py-3.5 font-mono text-xs">
                     {row.disease ? 'True' : 'False'}
                   </td>
 
-                  <td className="px-4 py-4">
+                  <td className="px-4 py-3.5 font-mono text-xs">
                     {row.rain ? 'True' : 'False'}
                   </td>
 
-                  <td className="px-4 py-4 font-semibold">
+                  <td className="px-4 py-3.5 font-mono text-xs font-semibold">
                     {allowed ? 'True' : 'False'}
                   </td>
 
-                  <td className="px-4 py-4">
+                  <td className="px-4 py-3.5 font-mono text-xs">
                     {active ? (
-                      <span className="font-bold">
+                      <span
+                        className={`inline-flex items-center gap-1.5 rounded border px-2 py-0.5 font-semibold ${
+                          allowed
+                            ? 'border-healthy/40 bg-card text-healthy'
+                            : 'border-disease/40 bg-card text-disease'
+                        }`}
+                      >
                         Current Row
                       </span>
                     ) : (
-                      <span className="text-slate-400">
+                      <span className="text-ink-faint">
                         -
                       </span>
                     )}
@@ -175,23 +189,23 @@ function TruthTableCard({
       <div
         role="status"
         aria-live="polite"
-        className={`mt-5 rounded-xl border p-4 ${
+        className={`mt-5 rounded border-l-4 border border-rule p-4 ${
           canSpray
-            ? 'border-green-300 bg-green-50 text-green-900'
-            : 'border-red-300 bg-red-50 text-red-900'
+            ? 'border-l-healthy bg-healthy-soft/70 text-ink'
+            : 'border-l-disease bg-disease-soft/70 text-ink'
         }`}
       >
-        <p className="text-sm font-semibold">
+        <p className="font-mono text-xs uppercase tracking-wider text-ink-muted">
           Current Logical Result
         </p>
 
-        <p className="mt-2 text-lg font-bold">
+        <p className="mt-1.5 font-mono text-base font-semibold sm:text-lg">
           {canSpray
             ? 'TRUE - Rule conditions satisfied'
             : 'FALSE - Rule conditions not satisfied'}
         </p>
 
-        <p className="mt-2 text-sm">
+        <p className="mt-1.5 text-sm text-ink-muted">
           {canSpray
             ? 'Disease is detected and rain is not expected.'
             : 'The conditions required by the example spraying rule are not both satisfied.'}
@@ -199,13 +213,13 @@ function TruthTableCard({
       </div>
 
       {/* Backend verification */}
-      <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4">
+      <div className="mt-4 rounded border border-caution/30 bg-caution-soft/70 p-4">
 
-        <p className="font-semibold text-amber-900">
+        <p className="font-mono text-xs font-semibold uppercase tracking-wider text-caution">
           Backend Logic Verification
         </p>
 
-        <p className="mt-2 text-sm text-amber-800">
+        <p className="mt-1.5 text-sm text-ink">
           {verificationStatus ||
             'No verification result available.'}
         </p>
@@ -216,11 +230,11 @@ function TruthTableCard({
       {Array.isArray(flags) && flags.length > 0 && (
         <div className="mt-5">
 
-          <h3 className="font-bold text-slate-800">
+          <h3 className="font-serif text-base font-semibold text-ink">
             Backend Rule Checks
           </h3>
 
-          <div className="mt-3 space-y-3">
+          <div className="mt-3 divide-y divide-rule rounded border border-rule bg-paper">
 
             {flags.map((flag, index) => {
               const statusText = String(flag.status || '')
@@ -230,17 +244,17 @@ function TruthTableCard({
               return (
                 <div
                   key={index}
-                  className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-200 p-3"
+                  className="flex flex-wrap items-center justify-between gap-2 px-4 py-3"
                 >
-                  <span className="text-sm text-slate-700">
+                  <span className="text-sm text-ink">
                     {flag.rule}
                   </span>
 
                   <span
-                    className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                    className={`rounded border px-2.5 py-0.5 font-mono text-xs font-medium ${
                       allowed
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
+                        ? 'border-healthy/30 bg-healthy-soft text-healthy'
+                        : 'border-disease/30 bg-disease-soft text-disease'
                     }`}
                   >
                     {statusText || 'Unknown'}
@@ -253,7 +267,7 @@ function TruthTableCard({
         </div>
       )}
 
-      <p className="mt-5 text-xs text-slate-500">
+      <p className="mt-5 text-xs leading-relaxed text-ink-faint">
         This interactive truth table demonstrates a simplified
         logical condition. It does not determine whether pesticide
         application is safe or appropriate in a real field.

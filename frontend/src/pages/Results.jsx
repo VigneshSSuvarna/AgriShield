@@ -1,4 +1,3 @@
-
 import { useEffect, useRef } from 'react'
 import { diseases } from '../data/diseases'
 import TruthTableCard from '../components/TruthTableCard'
@@ -165,116 +164,133 @@ ${verification}
       : generatedMarkdown
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-10">
+    <main className="animate-page-enter mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
 
       {/* Page heading */}
-      <p className="text-sm font-semibold tracking-wider text-emerald-700">
-        AGRISHIELD / DIAGNOSIS
-      </p>
+      <div className="border-b border-rule pb-6">
+        <p className="font-mono text-xs font-medium uppercase tracking-widest text-accent">
+          AGRISHIELD / DIAGNOSIS
+        </p>
 
-      <h1 className="mt-3 text-4xl font-bold text-emerald-950">
-        Diagnosis Results
-      </h1>
+        <h1 className="mt-3 font-serif text-3xl font-semibold text-ink sm:text-4xl">
+          Diagnosis Results
+        </h1>
 
-      <p className="mt-3 text-slate-600">
-        View the predicted crop condition, symptoms,
-        recommendations and logical rule information.
-      </p>
+        <p className="mt-2.5 max-w-2xl text-base text-ink-muted">
+          View the predicted crop condition, symptoms,
+          recommendations and logical rule information.
+        </p>
+      </div>
 
       {/* Sample mode warning */}
       {isDemo && (
         <div
           role="status"
-          className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900"
+          className="mt-6 rounded border border-caution/30 border-l-4 border-l-caution bg-caution-soft px-4 py-3.5 text-sm text-ink"
         >
-          <strong>Demonstration Mode:</strong> This report
+          <strong className="font-semibold">Demonstration Mode:</strong> This report
           contains sample data. The uploaded photograph
           has not been analyzed by AI.
         </div>
       )}
 
-      {/* Main result cards */}
-      <section className="mt-8 grid gap-6 md:grid-cols-2">
+      {/* Main result: Specimen photo beside Diagnosis Report Sheet */}
+      <section className="mt-8 grid gap-6 lg:grid-cols-12">
 
         {/* Uploaded photograph */}
-        <article className="rounded-3xl border border-emerald-100 bg-white p-6 shadow-sm">
+        <article className="flex flex-col rounded-lg border border-rule bg-card p-5 sm:p-6 lg:col-span-5">
 
-          <h2 className="mb-4 text-xl font-bold text-emerald-900">
+          <h2 className="border-b border-rule pb-3 font-serif text-lg font-semibold text-ink">
             Uploaded Leaf
           </h2>
 
-          {image ? (
-            <img
-              ref={imageRef}
-              alt="Uploaded crop leaf"
-              className="h-80 w-full rounded-xl bg-slate-50 object-contain"
-            />
-          ) : (
-            <div className="flex h-80 items-center justify-center rounded-xl bg-slate-50 text-slate-500">
-              No image available
-            </div>
-          )}
+          <div className="mt-4 flex-1 overflow-hidden rounded border border-rule bg-paper">
+            {image ? (
+              <img
+                ref={imageRef}
+                alt="Uploaded crop leaf"
+                className="h-72 w-full object-contain sm:h-80"
+              />
+            ) : (
+              <div className="flex h-72 items-center justify-center font-mono text-xs text-ink-faint sm:h-80">
+                No image available
+              </div>
+            )}
+          </div>
 
-          <p className="mt-3 break-all text-sm text-slate-500">
+          <p className="mt-3 break-all font-mono text-xs text-ink-muted">
             {image?.name || ''}
           </p>
 
         </article>
 
-        {/* Prediction details */}
-        <article className="rounded-3xl border border-emerald-100 bg-white p-6 shadow-sm">
+        {/* Prediction details (Diagnosis Report Sheet) */}
+        <article className="flex flex-col justify-between rounded-lg border border-rule bg-card p-5 sm:p-8 lg:col-span-7">
 
-          <span
-            className={`inline-block rounded-full px-4 py-2 text-sm font-semibold ${
-              status === 'Healthy'
-                ? 'bg-emerald-100 text-emerald-800'
-                : status === 'Diseased'
-                  ? 'bg-red-100 text-red-700'
-                  : 'bg-slate-100 text-slate-700'
-            }`}
-          >
-            {status}
-          </span>
+          <div>
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-rule pb-4">
+              <span
+                className={`inline-flex items-center rounded border px-3 py-1 font-mono text-xs font-semibold uppercase tracking-wider ${
+                  status === 'Healthy'
+                    ? 'border-healthy/30 bg-healthy-soft text-healthy'
+                    : status === 'Diseased'
+                      ? 'border-disease/30 bg-disease-soft text-disease'
+                      : 'border-rule bg-paper-alt text-ink-muted'
+                }`}
+              >
+                {status}
+              </span>
 
-          <p className="mt-6 text-sm text-slate-500">
-            Crop
-          </p>
+              <div className="text-right">
+                <p className="font-mono text-[11px] uppercase tracking-wider text-ink-faint">
+                  Crop
+                </p>
+                <h2 className="font-serif text-lg font-semibold text-ink">
+                  {cropName}
+                </h2>
+              </div>
+            </div>
 
-          <h2 className="text-2xl font-bold text-emerald-900">
-            {cropName}
-          </h2>
+            <div className="mt-6">
+              <p className="font-mono text-xs uppercase tracking-wider text-ink-faint">
+                Detected Condition
+              </p>
 
-          <p className="mt-5 text-sm text-slate-500">
-            Detected Condition
-          </p>
-
-          <h2 className="text-3xl font-bold text-slate-800">
-            {diseaseName}
-          </h2>
+              <h2 className="mt-2 font-serif text-3xl font-semibold leading-tight text-ink sm:text-4xl">
+                {diseaseName}
+              </h2>
+            </div>
+          </div>
 
           {/* Confidence score */}
-          <div className="mt-8">
+          <div className="mt-8 border-t border-rule pt-6">
 
-            <div className="flex items-center justify-between gap-3">
-              <p className="font-semibold text-slate-700">
+            <div className="flex items-baseline justify-between gap-3">
+              <p className="font-mono text-xs font-medium uppercase tracking-wider text-ink-muted">
                 Prediction Confidence
               </p>
 
-              <span className="text-2xl font-bold text-emerald-700">
+              <span className="font-mono text-2xl font-semibold text-ink">
                 {confidenceText}
               </span>
             </div>
 
-            <div className="mt-3 h-3 overflow-hidden rounded-full bg-slate-100">
+            <div className="mt-3 h-2 overflow-hidden rounded-full border border-rule bg-paper-alt">
               <div
-                className="h-full rounded-full bg-emerald-600"
+                className={`h-full rounded-full transition-all duration-300 ${
+                  status === 'Healthy'
+                    ? 'bg-healthy'
+                    : status === 'Diseased'
+                      ? 'bg-accent'
+                      : 'bg-ink-muted'
+                }`}
                 style={{
                   width: `${confidence ?? 0}%`,
                 }}
               />
             </div>
 
-            <p className="mt-3 text-xs text-slate-500">
+            <p className="mt-2.5 text-xs text-ink-faint">
               A confidence score does not guarantee
               a correct diagnosis.
             </p>
@@ -285,17 +301,17 @@ ${verification}
 
       </section>
 
-      {/* Symptoms and causes */}
-      <section className="mt-6 grid gap-6 md:grid-cols-2">
+      {/* Symptoms and Management Recommendations */}
+      <section className="mt-8 grid gap-6 md:grid-cols-2">
 
-        <article className="rounded-2xl border border-emerald-100 bg-white p-6">
+        <article className="rounded-lg border border-rule bg-card p-5 sm:p-7">
 
-          <h2 className="text-xl font-bold text-emerald-900">
+          <h2 className="border-b border-rule pb-3 font-serif text-xl font-semibold text-ink">
             Common Symptoms
           </h2>
 
           {symptoms.length > 0 ? (
-            <ul className="mt-4 list-disc space-y-3 pl-5 text-slate-600">
+            <ul className="mt-4 list-disc space-y-2.5 pl-5 text-sm leading-relaxed text-ink-muted marker:text-accent sm:text-base">
               {symptoms.map((symptom, index) => (
                 <li key={index}>
                   {symptom}
@@ -303,47 +319,48 @@ ${verification}
               ))}
             </ul>
           ) : (
-            <p className="mt-4 text-slate-500">
+            <p className="mt-4 text-sm text-ink-faint">
               No symptom information available.
             </p>
           )}
 
         </article>
 
-        <article className="rounded-2xl border border-emerald-100 bg-white p-6">
+        {/* Management recommendations */}
+        <article className="rounded-lg border border-rule bg-paper-alt/60 p-5 sm:p-7">
 
-          <h2 className="text-xl font-bold text-emerald-900">
-            Cause / Condition
+          <h2 className="border-b border-rule pb-3 font-serif text-xl font-semibold text-ink">
+            Management Recommendations
           </h2>
 
-          <p className="mt-4 text-slate-600">
-            {cause}
-          </p>
+          {recommendations.length > 0 ? (
+            <ul className="mt-4 list-disc space-y-2.5 pl-5 text-sm leading-relaxed text-ink marker:text-healthy sm:text-base">
+              {recommendations.map((item, index) => (
+                <li key={index}>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mt-4 text-sm text-ink-muted">
+              Recommendations are not available yet.
+            </p>
+          )}
 
         </article>
 
       </section>
 
-      {/* Management recommendations */}
-      <section className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-6">
+      {/* Cause / Condition */}
+      <section className="mt-6 rounded-lg border border-rule bg-card p-5 sm:p-7">
 
-        <h2 className="text-xl font-bold text-emerald-900">
-          Management Recommendations
+        <h2 className="font-serif text-lg font-semibold text-ink">
+          Cause / Condition
         </h2>
 
-        {recommendations.length > 0 ? (
-          <ul className="mt-4 list-disc space-y-3 pl-5 text-slate-700">
-            {recommendations.map((item, index) => (
-              <li key={index}>
-                {item}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="mt-4 text-slate-600">
-            Recommendations are not available yet.
-          </p>
-        )}
+        <p className="mt-2 text-sm leading-relaxed text-ink-muted sm:text-base">
+          {cause}
+        </p>
 
       </section>
 
@@ -361,12 +378,12 @@ ${verification}
       />
 
       {/* Navigation */}
-      <div className="mt-8 flex flex-wrap gap-4">
+      <div className="mt-10 flex flex-wrap items-center gap-3 border-t border-rule pt-8">
 
         <button
           type="button"
           onClick={() => setPage('detection')}
-          className="rounded-xl bg-emerald-700 px-6 py-4 font-semibold text-white hover:bg-emerald-800"
+          className="rounded-md bg-accent px-6 py-3.5 text-sm font-semibold text-card transition-colors duration-200 hover:bg-accent-hover sm:text-base"
         >
           Scan Another Leaf
         </button>
@@ -374,7 +391,7 @@ ${verification}
         <button
           type="button"
           onClick={() => setPage('diseases')}
-          className="rounded-xl border border-emerald-300 bg-white px-6 py-4 font-semibold text-emerald-800 hover:bg-emerald-50"
+          className="rounded-md border border-rule-strong bg-card px-6 py-3.5 text-sm font-semibold text-ink transition-colors duration-200 hover:bg-paper-alt sm:text-base"
         >
           Explore Disease Library
         </button>
@@ -382,7 +399,7 @@ ${verification}
         <button
           type="button"
           onClick={() => setPage('home')}
-          className="rounded-xl bg-slate-100 px-6 py-4 font-semibold text-slate-700 hover:bg-slate-200"
+          className="rounded-md px-5 py-3.5 text-sm font-medium text-ink-muted transition-colors duration-200 hover:bg-paper-alt hover:text-ink sm:text-base"
         >
           Back to Home
         </button>

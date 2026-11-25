@@ -82,7 +82,7 @@ function App() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50 text-slate-800">
+    <div className="flex min-h-screen flex-col bg-paper text-ink">
 
       <Navbar
         page={page === 'results' ? 'detection' : page}
@@ -120,16 +120,20 @@ function App() {
 
       </div>
 
-      <footer className="mt-10 border-t border-emerald-100 bg-white px-6 py-6 text-center">
-        <p className="font-semibold text-emerald-900">
-          AgriShield
-        </p>
-        <p className="mt-1 text-sm text-slate-500">
-          Crop Health and Pest Expert System
-        </p>
-        <p className="mt-2 text-xs text-slate-400">
-          AI-Powered Crop Disease Detection
-        </p>
+      <footer className="mt-16 border-t border-rule bg-paper-alt/60 px-6 py-8">
+        <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
+          <div>
+            <p className="font-serif text-lg font-semibold text-ink">
+              AgriShield
+            </p>
+            <p className="mt-0.5 text-sm text-ink-muted">
+              Crop Health and Pest Expert System
+            </p>
+          </div>
+          <p className="font-mono text-xs uppercase tracking-wider text-ink-faint">
+            AI-Powered Crop Disease Detection
+          </p>
+        </div>
       </footer>
 
     </div>

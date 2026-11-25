@@ -1,5 +1,9 @@
-
 import { useState, useEffect } from 'react'
+import {
+  CameraIcon,
+  CheckIcon,
+  UploadIcon,
+} from '../components/BotanicalIcons'
 
 function Detection({
   onDetect,
@@ -63,33 +67,39 @@ function Detection({
   }
 
   return (
-    <main className="mx-auto max-w-5xl px-6 py-10">
+    <main className="animate-page-enter mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
 
-      <p className="text-sm font-semibold text-emerald-700">
-        AGRISHIELD / DISEASE DETECTION
-      </p>
+      <div className="border-b border-rule pb-6">
+        <p className="font-mono text-xs font-medium uppercase tracking-widest text-accent">
+          AGRISHIELD / DISEASE DETECTION
+        </p>
 
-      <h1 className="mt-3 text-4xl font-bold text-emerald-950">
-        Detect Crop Disease
-      </h1>
+        <h1 className="mt-3 font-serif text-3xl font-semibold text-ink sm:text-4xl">
+          Detect Crop Disease
+        </h1>
 
-      <p className="mt-3 text-slate-600">
-        Take or upload a clear photograph of a tomato,
-        potato or corn leaf.
-      </p>
+        <p className="mt-2.5 text-base text-ink-muted">
+          Take or upload a clear photograph of a tomato,
+          potato or corn leaf.
+        </p>
+      </div>
 
-      <section className="mt-8 rounded-3xl border border-emerald-100 bg-white p-6 shadow-sm">
+      <section className="mt-8 rounded-lg border border-rule bg-card p-5 sm:p-8">
 
         <div className="grid gap-4 sm:grid-cols-2">
 
           {/* Phone Camera */}
-          <label className="cursor-pointer rounded-2xl border-2 border-dashed border-emerald-300 bg-emerald-50 p-8 text-center hover:bg-emerald-100 focus-within:ring-2 focus-within:ring-emerald-600">
+          <label className="group flex cursor-pointer flex-col items-center justify-center rounded-md border border-dashed border-accent/60 bg-accent-soft/40 px-6 py-8 text-center transition-colors duration-200 hover:border-accent hover:bg-accent-soft/70 focus-within:ring-2 focus-within:ring-accent focus-within:ring-offset-2">
 
-            <h2 className="text-xl font-bold text-emerald-900">
+            <span className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded border border-accent/30 bg-card text-accent transition-colors duration-200 group-hover:border-accent">
+              <CameraIcon className="h-6 w-6" />
+            </span>
+
+            <h2 className="font-serif text-xl font-semibold text-ink">
               Take a Photo
             </h2>
 
-            <p className="mt-2 text-sm text-slate-500">
+            <p className="mt-1.5 text-sm text-ink-muted">
               Capture a leaf using your phone camera
             </p>
 
@@ -106,13 +116,17 @@ function Detection({
           </label>
 
           {/* Upload Existing Image */}
-          <label className="cursor-pointer rounded-2xl border-2 border-dashed border-emerald-300 bg-emerald-50 p-8 text-center hover:bg-emerald-100 focus-within:ring-2 focus-within:ring-emerald-600">
+          <label className="group flex cursor-pointer flex-col items-center justify-center rounded-md border border-dashed border-rule-strong bg-paper px-6 py-8 text-center transition-colors duration-200 hover:border-ink hover:bg-paper-alt/70 focus-within:ring-2 focus-within:ring-accent focus-within:ring-offset-2">
 
-            <h2 className="text-xl font-bold text-emerald-900">
+            <span className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded border border-rule bg-card text-ink transition-colors duration-200 group-hover:border-ink">
+              <UploadIcon className="h-6 w-6" />
+            </span>
+
+            <h2 className="font-serif text-xl font-semibold text-ink">
               Upload Image
             </h2>
 
-            <p className="mt-2 text-sm text-slate-500">
+            <p className="mt-1.5 text-sm text-ink-muted">
               Choose a photo from your device
             </p>
 
@@ -129,7 +143,7 @@ function Detection({
 
         </div>
 
-        <p className="mt-4 text-center text-sm text-slate-500">
+        <p className="mt-4 text-center font-mono text-xs text-ink-faint">
           Supported formats: JPG and PNG | Maximum size: 10 MB
         </p>
 
@@ -137,7 +151,7 @@ function Detection({
         {fileError && (
           <p
             role="alert"
-            className="mt-5 rounded-xl bg-red-50 p-4 text-red-700"
+            className="mt-5 rounded border border-disease/30 border-l-4 border-l-disease bg-disease-soft px-4 py-3 text-sm font-medium text-disease"
           >
             {fileError}
           </p>
@@ -145,11 +159,11 @@ function Detection({
 
         {/* Selected Image Preview */}
         {photo && (
-          <div className="mt-6 rounded-2xl border border-slate-200 p-4">
+          <figure className="mt-6 rounded-md border border-rule bg-paper p-4 sm:p-5">
 
-            <div className="mb-4 flex items-center justify-between gap-3">
+            <div className="mb-3 flex items-center justify-between gap-3 border-b border-rule pb-3">
 
-              <h2 className="font-semibold text-slate-800">
+              <h2 className="font-serif text-base font-semibold text-ink">
                 Image Preview
               </h2>
 
@@ -157,28 +171,41 @@ function Detection({
                 type="button"
                 onClick={removeImage}
                 disabled={isLoading}
-                className="rounded-lg bg-red-50 px-4 py-2 text-sm font-medium text-red-600 disabled:opacity-50"
+                className="rounded border border-disease/30 bg-card px-3 py-1.5 text-xs font-medium text-disease transition-colors duration-150 hover:bg-disease-soft disabled:cursor-not-allowed disabled:opacity-45"
               >
                 Remove
               </button>
 
             </div>
 
-            <img
-              src={photo.url}
-              alt="Selected crop leaf"
-              className="mx-auto max-h-80 w-full rounded-xl bg-slate-50 object-contain"
-              onError={() => {
-                setPhoto(null)
-                setFileError('This image could not be opened.')
-              }}
-            />
+            <div className="relative overflow-hidden rounded border border-rule bg-card">
+              <img
+                src={photo.url}
+                alt="Selected crop leaf"
+                className="mx-auto max-h-80 w-full object-contain"
+                onError={() => {
+                  setPhoto(null)
+                  setFileError('This image could not be opened.')
+                }}
+              />
 
-            <p className="mt-3 break-all text-center text-sm text-slate-500">
+              {isLoading && (
+                <div
+                  className="pointer-events-none absolute inset-0 bg-ink/10"
+                  aria-hidden="true"
+                >
+                  <div className="animate-scan-line h-full w-full">
+                    <div className="h-0.5 w-full bg-accent shadow-[0_0_8px_rgba(184,80,43,0.7)]" />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <figcaption className="mt-3 break-all text-center font-mono text-xs text-ink-muted">
               {photo.file.name}
-            </p>
+            </figcaption>
 
-          </div>
+          </figure>
         )}
 
         {/* Loading */}
@@ -186,8 +213,9 @@ function Detection({
           <div
             role="status"
             aria-live="polite"
-            className="mt-6 rounded-xl bg-blue-50 p-5 text-center text-blue-800"
+            className="mt-5 flex items-center justify-center gap-2.5 rounded border border-rule bg-paper-alt px-4 py-3 text-center font-mono text-xs font-medium uppercase tracking-wider text-ink"
           >
+            <span className="h-2 w-2 rounded-full bg-accent" aria-hidden="true" />
             Analyzing your leaf photograph...
           </div>
         )}
@@ -196,59 +224,70 @@ function Detection({
         {error && (
           <p
             role="alert"
-            className="mt-5 rounded-xl bg-red-50 p-4 text-red-700"
+            className="mt-5 rounded border border-disease/30 border-l-4 border-l-disease bg-disease-soft px-4 py-3 text-sm font-medium text-disease"
           >
             {error}
           </p>
         )}
 
-        {/* Real AI Detection */}
-        <button
-          type="button"
-          onClick={() => onDetect(photo?.file)}
-          disabled={!photo || isLoading || !backendReady}
-          className="mt-6 w-full rounded-xl bg-emerald-700 px-6 py-4 font-semibold text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-slate-300"
-        >
-          {isLoading ? 'Analyzing Image...' : 'Detect Disease'}
-        </button>
+        <div className="mt-6 space-y-3 border-t border-rule pt-6">
+          {/* Real AI Detection */}
+          <button
+            type="button"
+            onClick={() => onDetect(photo?.file)}
+            disabled={!photo || isLoading || !backendReady}
+            className="w-full rounded-md bg-accent px-6 py-4 text-base font-semibold text-card transition-colors duration-200 hover:bg-accent-hover disabled:cursor-not-allowed disabled:bg-rule disabled:text-ink-faint"
+          >
+            {isLoading ? 'Analyzing Image...' : 'Detect Disease'}
+          </button>
 
-        {!backendReady && (
-          <p className="mt-3 text-center text-sm text-amber-700">
-            Real detection will be available when the image-based
-            backend API is connected.
+          {!backendReady && (
+            <p className="text-center text-xs text-caution">
+              Real detection will be available when the image-based
+              backend API is connected.
+            </p>
+          )}
+
+          {/* Sample Result */}
+          <button
+            type="button"
+            onClick={() => onPreviewDemo(photo?.file)}
+            disabled={!photo || isLoading}
+            className="w-full rounded-md border border-rule-strong bg-paper px-6 py-3.5 text-sm font-semibold text-ink transition-colors duration-200 hover:bg-paper-alt disabled:cursor-not-allowed disabled:opacity-45"
+          >
+            View Sample Diagnosis Report
+          </button>
+
+          <p className="text-center text-xs text-ink-faint">
+            Sample results are for demonstration only.
+            They are not real AI predictions.
           </p>
-        )}
-
-        {/* Sample Result */}
-        <button
-          type="button"
-          onClick={() => onPreviewDemo(photo?.file)}
-          disabled={!photo || isLoading}
-          className="mt-4 w-full rounded-xl border border-emerald-300 bg-white px-6 py-4 font-semibold text-emerald-800 hover:bg-emerald-50 disabled:opacity-50"
-        >
-          View Sample Diagnosis Report
-        </button>
-
-        <p className="mt-2 text-center text-xs text-slate-500">
-          Sample results are for demonstration only.
-          They are not real AI predictions.
-        </p>
+        </div>
 
       </section>
 
       {/* Photography Guidelines */}
-      <section className="mt-8 rounded-2xl border border-emerald-100 bg-emerald-50 p-6">
+      <section className="mt-8 rounded-lg border border-rule bg-paper-alt/60 p-5 sm:p-6">
 
-        <h2 className="text-lg font-bold text-emerald-900">
+        <h2 className="font-serif text-lg font-semibold text-ink">
           Tips for Better Results
         </h2>
 
-        <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-600">
-          <li>Capture one leaf at a time.</li>
-          <li>Use sufficient lighting.</li>
-          <li>Make sure the affected area is clearly visible.</li>
-          <li>Avoid blurry photographs.</li>
-          <li>Use tomato, potato or corn leaves.</li>
+        <ul className="mt-4 grid gap-2.5 text-sm text-ink-muted sm:grid-cols-2">
+          {[
+            'Capture one leaf at a time.',
+            'Use sufficient lighting.',
+            'Make sure the affected area is clearly visible.',
+            'Avoid blurry photographs.',
+            'Use tomato, potato or corn leaves.',
+          ].map((tip) => (
+            <li key={tip} className="flex items-start gap-2.5">
+              <span className="mt-0.5 shrink-0 text-healthy">
+                <CheckIcon className="h-4 w-4" />
+              </span>
+              <span>{tip}</span>
+            </li>
+          ))}
         </ul>
 
       </section>

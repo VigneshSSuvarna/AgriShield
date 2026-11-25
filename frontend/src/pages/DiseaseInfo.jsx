@@ -1,13 +1,6 @@
-
 import { useEffect, useState } from 'react'
 import { diseases } from '../data/diseases'
-
-// Original crop icons
-const cropIcons = {
-  Tomato: '🍅',
-  Potato: '🥔',
-  Corn: '🌽',
-}
+import { CropIllustration } from '../components/BotanicalIcons'
 
 function DiseaseInfo() {
   const [selectedCrop, setSelectedCrop] = useState('All')
@@ -52,62 +45,71 @@ function DiseaseInfo() {
 
   if (selectedDisease) {
     return (
-      <main className="mx-auto max-w-5xl px-6 py-10">
+      <main className="animate-page-enter mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
 
         {/* Back button */}
         <button
           type="button"
           onClick={backToLibrary}
-          className="inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-white px-5 py-3 font-semibold text-emerald-800 transition hover:bg-emerald-50"
+          className="inline-flex items-center gap-2 rounded border border-rule-strong bg-card px-4 py-2.5 text-sm font-medium text-ink transition-colors duration-150 hover:bg-paper-alt"
         >
           <span aria-hidden="true">&larr;</span>
           Back to Disease Library
         </button>
 
         {/* Heading */}
-        <p className="mt-8 text-sm font-semibold tracking-wider text-emerald-700">
+        <p className="mt-8 font-mono text-xs font-medium uppercase tracking-widest text-accent">
           AGRISHIELD / DISEASE DETAILS
         </p>
 
-        <section className="mt-5 overflow-hidden rounded-3xl border border-emerald-100 bg-white shadow-sm">
+        <section className="mt-4 overflow-hidden rounded-lg border border-rule bg-card">
 
-          {/* Crop icon and disease name */}
-          <div className="bg-emerald-50 p-8">
+          {/* Field-guide header band */}
+          <div className="border-b border-rule bg-paper-alt/80 p-6 sm:p-8">
 
-            <div className="mb-6 flex h-28 w-28 items-center justify-center rounded-2xl bg-white text-7xl shadow-sm">
-              {cropIcons[selectedDisease.crop]}
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-4">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded border border-rule bg-card text-ink sm:h-20 sm:w-20">
+                  <CropIllustration
+                    crop={selectedDisease.crop}
+                    className="h-10 w-10 sm:h-12 sm:w-12"
+                  />
+                </div>
+
+                <div>
+                  <p className="font-mono text-xs font-medium uppercase tracking-wider text-ink-muted">
+                    {selectedDisease.crop}
+                  </p>
+
+                  <h1 className="mt-1 font-serif text-3xl font-semibold leading-tight text-ink sm:text-4xl">
+                    {selectedDisease.name}
+                  </h1>
+                </div>
+              </div>
+
+              <span
+                className={`self-start rounded border px-3 py-1 font-mono text-xs font-semibold uppercase tracking-wider sm:self-center ${
+                  selectedDisease.healthy
+                    ? 'border-healthy/30 bg-healthy-soft text-healthy'
+                    : 'border-disease/30 bg-disease-soft text-disease'
+                }`}
+              >
+                {selectedDisease.healthy
+                  ? 'Healthy'
+                  : 'Disease'}
+              </span>
             </div>
-
-            <p className="text-sm font-semibold text-emerald-700">
-              {selectedDisease.crop}
-            </p>
-
-            <h1 className="mt-2 text-4xl font-bold text-emerald-950">
-              {selectedDisease.name}
-            </h1>
-
-            <span
-              className={`mt-5 inline-block rounded-full px-4 py-2 text-sm font-semibold ${
-                selectedDisease.healthy
-                  ? 'bg-emerald-100 text-emerald-800'
-                  : 'bg-amber-100 text-amber-800'
-              }`}
-            >
-              {selectedDisease.healthy
-                ? 'Healthy'
-                : 'Disease'}
-            </span>
 
           </div>
 
           {/* Overview */}
-          <div className="p-6 md:p-8">
+          <div className="p-6 sm:p-8">
 
-            <h2 className="text-xl font-bold text-emerald-900">
+            <h2 className="font-serif text-xl font-semibold text-ink">
               Overview
             </h2>
 
-            <p className="mt-4 leading-8 text-slate-600">
+            <p className="mt-3 max-w-3xl text-base leading-relaxed text-ink-muted">
               {selectedDisease.description}
             </p>
 
@@ -119,14 +121,14 @@ function DiseaseInfo() {
         <section className="mt-6 grid gap-6 md:grid-cols-2">
 
           {/* Symptoms */}
-          <article className="rounded-2xl bg-amber-50 p-6">
+          <article className="rounded-lg border border-rule bg-card p-6">
 
-            <h2 className="text-xl font-bold text-amber-900">
+            <h2 className="border-b border-rule pb-3 font-serif text-xl font-semibold text-ink">
               Common Symptoms
             </h2>
 
             {selectedDisease.symptoms?.length > 0 ? (
-              <ul className="mt-4 list-disc space-y-3 pl-5 text-slate-700">
+              <ul className="mt-4 list-disc space-y-2.5 pl-5 text-sm leading-relaxed text-ink-muted marker:text-accent sm:text-base">
                 {selectedDisease.symptoms.map(
                   (symptom, index) => (
                     <li key={index}>
@@ -136,7 +138,7 @@ function DiseaseInfo() {
                 )}
               </ul>
             ) : (
-              <p className="mt-4 text-slate-600">
+              <p className="mt-4 text-sm text-ink-faint">
                 No symptom information available.
               </p>
             )}
@@ -144,14 +146,14 @@ function DiseaseInfo() {
           </article>
 
           {/* Management guidance */}
-          <article className="rounded-2xl bg-emerald-50 p-6">
+          <article className="rounded-lg border border-rule bg-paper-alt/60 p-6">
 
-            <h2 className="text-xl font-bold text-emerald-900">
+            <h2 className="border-b border-rule pb-3 font-serif text-xl font-semibold text-ink">
               Management Guidance
             </h2>
 
             {selectedDisease.management?.length > 0 ? (
-              <ul className="mt-4 list-disc space-y-3 pl-5 text-slate-700">
+              <ul className="mt-4 list-disc space-y-2.5 pl-5 text-sm leading-relaxed text-ink marker:text-healthy sm:text-base">
                 {selectedDisease.management.map(
                   (tip, index) => (
                     <li key={index}>
@@ -161,7 +163,7 @@ function DiseaseInfo() {
                 )}
               </ul>
             ) : (
-              <p className="mt-4 text-slate-600">
+              <p className="mt-4 text-sm text-ink-muted">
                 No management guidance available.
               </p>
             )}
@@ -171,13 +173,13 @@ function DiseaseInfo() {
         </section>
 
         {/* Cause information */}
-        <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6">
+        <section className="mt-6 rounded-lg border border-rule bg-card p-6">
 
-          <h2 className="text-xl font-bold text-slate-800">
+          <h2 className="font-serif text-lg font-semibold text-ink">
             Cause / Condition
           </h2>
 
-          <p className="mt-3 leading-7 text-slate-600">
+          <p className="mt-2 text-sm leading-relaxed text-ink-muted sm:text-base">
             {selectedDisease.cause ||
               'Cause information not available.'}
           </p>
@@ -185,9 +187,9 @@ function DiseaseInfo() {
         </section>
 
         {/* Disclaimer */}
-        <section className="mt-6 rounded-2xl bg-slate-50 p-6">
+        <section className="mt-6 rounded border border-rule bg-paper-alt/50 px-5 py-4">
 
-          <p className="text-sm leading-relaxed text-slate-600">
+          <p className="text-xs leading-relaxed text-ink-muted sm:text-sm">
             This information is provided for educational
             purposes. A photograph alone may not confirm
             every crop disease. Consult qualified local
@@ -198,12 +200,12 @@ function DiseaseInfo() {
         </section>
 
         {/* Bottom back button */}
-        <div className="mt-8 flex justify-center">
+        <div className="mt-8 flex justify-start border-t border-rule pt-6">
 
           <button
             type="button"
             onClick={backToLibrary}
-            className="rounded-xl bg-emerald-700 px-8 py-4 font-semibold text-white transition hover:bg-emerald-800"
+            className="rounded-md bg-accent px-6 py-3.5 text-sm font-semibold text-card transition-colors duration-200 hover:bg-accent-hover sm:text-base"
           >
             Back to Disease Library
           </button>
@@ -219,66 +221,70 @@ function DiseaseInfo() {
   // ==========================================
 
   return (
-    <main className="mx-auto max-w-7xl px-6 py-10">
+    <main className="animate-page-enter mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
 
       {/* Page heading */}
-      <p className="text-sm font-semibold tracking-wider text-emerald-700">
-        AGRISHIELD / CROP KNOWLEDGE BASE
-      </p>
+      <div className="border-b border-rule pb-6">
+        <p className="font-mono text-xs font-medium uppercase tracking-widest text-accent">
+          AGRISHIELD / CROP KNOWLEDGE BASE
+        </p>
 
-      <h1 className="mt-3 text-4xl font-bold text-emerald-950">
-        Disease Information Library
-      </h1>
+        <h1 className="mt-3 font-serif text-3xl font-semibold text-ink sm:text-4xl">
+          Disease Information Library
+        </h1>
 
-      <p className="mt-3 max-w-2xl text-slate-600">
-        Explore the crop conditions supported by AgriShield,
-        including common symptoms and basic management guidance.
-      </p>
-
-      {/* Search bar */}
-      <div className="mt-8">
-
-        <input
-          type="search"
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-          placeholder="Search crop or disease..."
-          aria-label="Search crop diseases"
-          className="w-full rounded-xl border border-emerald-200 bg-white px-5 py-4 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
-        />
-
+        <p className="mt-2.5 max-w-2xl text-base text-ink-muted">
+          Explore the crop conditions supported by AgriShield,
+          including common symptoms and basic management guidance.
+        </p>
       </div>
 
-      {/* Crop filter buttons */}
-      <div className="mt-5 flex flex-wrap gap-3">
+      {/* Search bar and crop filters */}
+      <div className="mt-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 
-        {['All', 'Tomato', 'Potato', 'Corn'].map((crop) => (
+        <div className="w-full lg:max-w-md">
+          <input
+            type="search"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Search crop or disease..."
+            aria-label="Search crop diseases"
+            className="w-full rounded-md border border-rule-strong bg-card px-4 py-3 text-sm text-ink placeholder:text-ink-faint transition-colors duration-150 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
+          />
+        </div>
 
-          <button
-            key={crop}
-            type="button"
-            onClick={() => selectCrop(crop)}
-            aria-pressed={selectedCrop === crop}
-            className={`rounded-xl px-5 py-3 text-sm font-semibold transition ${
-              selectedCrop === crop
-                ? 'bg-emerald-700 text-white'
-                : 'border border-emerald-200 bg-white text-emerald-800 hover:bg-emerald-50'
-            }`}
-          >
-            {crop === 'All' ? 'All Crops' : crop}
-          </button>
+        {/* Crop filter buttons */}
+        <div className="flex flex-wrap gap-2">
 
-        ))}
+          {['All', 'Tomato', 'Potato', 'Corn'].map((crop) => (
+
+            <button
+              key={crop}
+              type="button"
+              onClick={() => selectCrop(crop)}
+              aria-pressed={selectedCrop === crop}
+              className={`rounded border px-4 py-2 text-sm font-medium transition-colors duration-150 ${
+                selectedCrop === crop
+                  ? 'border-ink bg-ink text-paper'
+                  : 'border-rule-strong bg-card text-ink-muted hover:border-ink hover:text-ink'
+              }`}
+            >
+              {crop === 'All' ? 'All Crops' : crop}
+            </button>
+
+          ))}
+
+        </div>
 
       </div>
 
       {/* Class count */}
-      <p className="mt-6 text-sm text-slate-500">
+      <p className="mt-6 border-b border-rule pb-3 font-mono text-xs uppercase tracking-wider text-ink-faint">
         Showing {filteredDiseases.length} of {diseases.length} classes
       </p>
 
-      {/* Disease cards */}
-      <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {/* Disease index */}
+      <div className="mt-5 grid gap-4 md:grid-cols-2">
 
         {filteredDiseases.map((disease) => (
 
@@ -286,44 +292,51 @@ function DiseaseInfo() {
             key={disease.id}
             type="button"
             onClick={() => openDisease(disease)}
-            className="group rounded-2xl border border-emerald-100 bg-white p-6 text-left shadow-sm transition hover:-translate-y-1 hover:border-emerald-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-emerald-600"
+            className="group flex flex-col justify-between rounded-lg border border-rule bg-card p-5 text-left transition-colors duration-200 hover:border-accent sm:p-6"
           >
+            <div>
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-center gap-3.5">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded border border-rule bg-paper text-ink transition-colors duration-200 group-hover:border-accent/40 group-hover:text-accent">
+                    <CropIllustration
+                      crop={disease.crop}
+                      className="h-7 w-7"
+                    />
+                  </div>
 
-            {/* ORIGINAL CROP ICONS RESTORED */}
-            <div className="mb-5 flex h-20 items-center justify-center rounded-xl bg-emerald-50 text-5xl">
-              {cropIcons[disease.crop]}
+                  <div>
+                    <p className="font-mono text-xs uppercase tracking-wider text-ink-muted">
+                      {disease.crop}
+                    </p>
+
+                    <h2 className="mt-0.5 font-serif text-xl font-semibold text-ink">
+                      {disease.name}
+                    </h2>
+                  </div>
+                </div>
+
+                <span
+                  className={`shrink-0 rounded border px-2.5 py-0.5 font-mono text-[11px] font-semibold uppercase tracking-wider ${
+                    disease.healthy
+                      ? 'border-healthy/30 bg-healthy-soft text-healthy'
+                      : 'border-disease/30 bg-disease-soft text-disease'
+                  }`}
+                >
+                  {disease.healthy ? 'Healthy' : 'Disease'}
+                </span>
+              </div>
+
+              <p className="mt-4 line-clamp-2 text-sm leading-relaxed text-ink-muted">
+                {disease.description}
+              </p>
             </div>
 
-            {/* Crop name */}
-            <p className="text-sm font-medium text-slate-500">
-              {disease.crop}
-            </p>
-
-            {/* Disease name */}
-            <h2 className="mt-2 text-xl font-bold text-emerald-950">
-              {disease.name}
-            </h2>
-
-            {/* Health status */}
-            <span
-              className={`mt-4 inline-block rounded-full px-3 py-1 text-xs font-semibold ${
-                disease.healthy
-                  ? 'bg-emerald-100 text-emerald-800'
-                  : 'bg-amber-100 text-amber-800'
-              }`}
-            >
-              {disease.healthy ? 'Healthy' : 'Disease'}
-            </span>
-
-            {/* Short description */}
-            <p className="mt-4 line-clamp-3 text-sm leading-relaxed text-slate-600">
-              {disease.description}
-            </p>
-
-            {/* View Details */}
-            <p className="mt-5 font-semibold text-emerald-700 group-hover:text-emerald-900">
+            <p className="mt-5 flex items-center font-mono text-xs font-medium uppercase tracking-wider text-accent group-hover:text-accent-hover">
               View Details
-              <span className="ml-2" aria-hidden="true">
+              <span
+                className="ml-2 transition-transform duration-150 group-hover:translate-x-0.5"
+                aria-hidden="true"
+              >
                 &rarr;
               </span>
             </p>
@@ -336,13 +349,13 @@ function DiseaseInfo() {
 
       {/* No search results */}
       {filteredDiseases.length === 0 && (
-        <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-8 text-center text-slate-500">
+        <div className="mt-8 rounded-lg border border-rule bg-card p-8 text-center text-sm text-ink-muted">
           No matching crop conditions found.
         </div>
       )}
 
       {/* Disclaimer */}
-      <p className="mt-8 text-sm leading-relaxed text-slate-500">
+      <p className="mt-10 border-t border-rule pt-6 text-xs leading-relaxed text-ink-faint sm:text-sm">
         This library provides general educational information.
         A photograph alone may not confirm every crop disease.
         Consult qualified local agricultural guidance before
