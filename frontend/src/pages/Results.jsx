@@ -12,7 +12,7 @@ function Results({
 }) {
   const imageRef = useRef(null)
 
-  // Display uploaded image without updating React state
+  // Display the uploaded image
   useEffect(() => {
     if (!image || !imageRef.current) return
 
@@ -30,12 +30,12 @@ function Results({
     confidence: 94,
   }
 
-  // Choose between demo and real prediction
+  // Choose between sample and real prediction
   const result = isDemo
     ? demoPrediction
     : prediction || {}
 
-  // Find matching information in the disease library
+  // Find matching disease information
   const disease = diseases.find(
     (item) => item.modelLabel === result.prediction
   )
@@ -83,18 +83,21 @@ function Results({
     ? result.recommendations
     : disease?.management || []
 
+  // Retrieve cause from backend or disease library
   const cause =
-    disease?.cause || 'Information not available'
+    result.cause ||
+    disease?.cause ||
+    'Information not available'
 
   // Logic verification status
   const verification = isDemo
-    ? 'Not performed — demonstration'
+    ? 'Not performed - demonstration'
     : result.verification_status ||
       result.logic_status ||
       result.verification ||
       'Not available from backend'
 
-  // Markdown report
+  // Generate Markdown report
   const markdown = result.markdown_metrics || `
 ## Diagnosis Summary
 
@@ -113,16 +116,16 @@ function Results({
 ## Symptoms
 
 ${
-  symptoms.map((item) => `- ${item}`).join('\n') ||
-  'Not available'
-}
+    symptoms.map((item) => `- ${item}`).join('\n') ||
+    'Not available'
+  }
 
 ## Recommendations
 
 ${
-  recommendations.map((item) => `- ${item}`).join('\n') ||
-  'Not available'
-}
+    recommendations.map((item) => `- ${item}`).join('\n') ||
+    'Not available'
+  }
 
 ## Logic Verification
 
@@ -141,7 +144,7 @@ ${verification}
         Diagnosis Results
       </h1>
 
-      {/* Demo warning */}
+      {/* Demo mode warning */}
       {isDemo && (
         <div
           role="status"
@@ -152,10 +155,10 @@ ${verification}
         </div>
       )}
 
-      {/* Main results */}
+      {/* Main results section */}
       <section className="mt-8 grid gap-6 md:grid-cols-2">
 
-        {/* Uploaded image */}
+        {/* Uploaded leaf image */}
         <article className="rounded-3xl border border-emerald-100 bg-white p-6 shadow-sm">
 
           <h2 className="mb-4 text-xl font-bold text-emerald-900">
@@ -180,7 +183,7 @@ ${verification}
 
         </article>
 
-        {/* Prediction */}
+        {/* Prediction details */}
         <article className="rounded-3xl border border-emerald-100 bg-white p-6 shadow-sm">
 
           <span
@@ -228,6 +231,7 @@ ${verification}
 
             </div>
 
+            {/* Confidence progress bar */}
             <div className="mt-3 h-3 overflow-hidden rounded-full bg-slate-100">
               <div
                 className="h-full rounded-full bg-emerald-600"
@@ -251,6 +255,7 @@ ${verification}
       {/* Symptoms and causes */}
       <section className="mt-6 grid gap-6 md:grid-cols-2">
 
+        {/* Symptoms */}
         <article className="rounded-2xl border border-emerald-100 bg-white p-6">
 
           <h2 className="text-xl font-bold text-emerald-900">
@@ -273,6 +278,7 @@ ${verification}
 
         </article>
 
+        {/* Cause */}
         <article className="rounded-2xl border border-emerald-100 bg-white p-6">
 
           <h2 className="text-xl font-bold text-emerald-900">
@@ -323,7 +329,7 @@ ${verification}
 
       </section>
 
-      {/* Markdown report */}
+      {/* Detailed Markdown report */}
       <section className="mt-6 rounded-2xl border border-emerald-100 bg-white p-6">
 
         <h2 className="mb-5 text-xl font-bold text-emerald-900">
