@@ -1,8 +1,8 @@
 
 import { useEffect, useRef } from 'react'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
 import { diseases } from '../data/diseases'
+import TruthTableCard from '../components/TruthTableCard'
+import MarkdownReport from '../components/MarkdownReport'
 
 function Results({
   image,
@@ -12,35 +12,35 @@ function Results({
 }) {
   const imageRef = useRef(null)
 
-  // Display the uploaded image
+  // Display the uploaded leaf photograph
   useEffect(() => {
     if (!image || !imageRef.current) return
 
-    const url = URL.createObjectURL(image)
-    imageRef.current.src = url
+    const imageUrl = URL.createObjectURL(image)
+    imageRef.current.src = imageUrl
 
     return () => {
-      URL.revokeObjectURL(url)
+      URL.revokeObjectURL(imageUrl)
     }
   }, [image])
 
-  // Sample prediction for demonstration only
+  // Mock result for frontend demonstration
   const demoPrediction = {
     prediction: 'Tomato___Late_blight',
     confidence: 94,
   }
 
-  // Choose between sample and real prediction
   const result = isDemo
     ? demoPrediction
     : prediction || {}
 
-  // Find matching disease information
+  // Match prediction to the disease library
   const disease = diseases.find(
     (item) => item.modelLabel === result.prediction
   )
 
-  const cropName = disease?.crop || 'Unknown Crop'
+  const cropName =
+    result.crop || disease?.crop || 'Unknown Crop'
 
   const diseaseName =
     disease?.name ||
@@ -53,7 +53,7 @@ function Results({
       : 'Diseased'
     : 'Unconfirmed'
 
-  // Convert confidence into percentage
+  // Convert model confidence to a percentage
   const rawConfidence =
     result.confidence != null
       ? Number(result.confidence)
@@ -71,25 +71,25 @@ function Results({
       )
     : null
 
-  // Retrieve symptoms from backend or disease library
+  // Symptoms
   const symptoms = Array.isArray(result.symptoms)
     ? result.symptoms
     : disease?.symptoms || []
 
-  // Retrieve recommendations
+  // Disease cause
+  const cause =
+    result.cause ||
+    disease?.cause ||
+    'Information not available'
+
+  // Management recommendations
   const recommendations = Array.isArray(
     result.recommendations
   )
     ? result.recommendations
     : disease?.management || []
 
-  // Retrieve cause from backend or disease library
-  const cause =
-    result.cause ||
-    disease?.cause ||
-    'Information not available'
-
-  // Logic verification status
+  // Actual backend verification, if supplied
   const verification = isDemo
     ? 'Not performed - demonstration'
     : result.verification_status ||
@@ -97,40 +97,72 @@ function Results({
       result.verification ||
       'Not available from backend'
 
-  // Generate Markdown report
-  const markdown = result.markdown_metrics || `
+  // Optional backend logic flags
+  const logicFlags =
+    !isDemo && Array.isArray(result.truth_table_flags)
+      ? result.truth_table_flags
+      : []
+
+  // Format information as Markdown
+  const symptomsMarkdown =
+    symptoms.length > 0
+      ? symptoms.map((item) => `- ${item}`).join('\n')
+      : 'No symptom information available.'
+
+  const recommendationsMarkdown =
+    recommendations.length > 0
+      ? recommendations
+          .map((item) => `- ${item}`)
+          .join('\n')
+      : 'No recommendations available.'
+
+  const confidenceText =
+    confidence !== null
+      ? `${confidence.toFixed(2)}%`
+      : 'Not available'
+
+  const generatedMarkdown = `
 ## Diagnosis Summary
 
 **Crop:** ${cropName}
 
-**Condition:** ${diseaseName}
+**Detected Condition:** ${diseaseName}
 
 **Status:** ${status}
 
-**Confidence:** ${
-    confidence !== null
-      ? `${confidence.toFixed(2)}%`
-      : 'Not available'
-  }
+## Prediction Metrics
 
-## Symptoms
+| Metric | Value |
+| --- | --- |
+| Crop | ${cropName} |
+| Predicted Class | ${diseaseName} |
+| Health Status | ${status} |
+| Confidence Score | ${confidenceText} |
 
-${
-    symptoms.map((item) => `- ${item}`).join('\n') ||
-    'Not available'
-  }
+## Common Symptoms
 
-## Recommendations
+${symptomsMarkdown}
 
-${
-    recommendations.map((item) => `- ${item}`).join('\n') ||
-    'Not available'
-  }
+## Cause / Condition
+
+${cause}
+
+## Management Recommendations
+
+${recommendationsMarkdown}
 
 ## Logic Verification
 
 ${verification}
 `
+
+  // Use backend Markdown when available
+  const markdown =
+    !isDemo &&
+    typeof result.markdown_metrics === 'string' &&
+    result.markdown_metrics.trim()
+      ? result.markdown_metrics
+      : generatedMarkdown
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-10">
@@ -144,21 +176,27 @@ ${verification}
         Diagnosis Results
       </h1>
 
-      {/* Demo mode warning */}
+      <p className="mt-3 text-slate-600">
+        View the predicted crop condition, symptoms,
+        recommendations and logical rule information.
+      </p>
+
+      {/* Sample mode warning */}
       {isDemo && (
         <div
           role="status"
           className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900"
         >
-          <strong>Demonstration Mode:</strong> This is a sample
-          diagnosis. Your photograph has not been analyzed by AI.
+          <strong>Demonstration Mode:</strong> This report
+          contains sample data. The uploaded photograph
+          has not been analyzed by AI.
         </div>
       )}
 
-      {/* Main results section */}
+      {/* Main result cards */}
       <section className="mt-8 grid gap-6 md:grid-cols-2">
 
-        {/* Uploaded leaf image */}
+        {/* Uploaded photograph */}
         <article className="rounded-3xl border border-emerald-100 bg-white p-6 shadow-sm">
 
           <h2 className="mb-4 text-xl font-bold text-emerald-900">
@@ -218,20 +256,15 @@ ${verification}
           <div className="mt-8">
 
             <div className="flex items-center justify-between gap-3">
-
               <p className="font-semibold text-slate-700">
                 Prediction Confidence
               </p>
 
               <span className="text-2xl font-bold text-emerald-700">
-                {confidence !== null
-                  ? `${confidence.toFixed(2)}%`
-                  : 'N/A'}
+                {confidenceText}
               </span>
-
             </div>
 
-            {/* Confidence progress bar */}
             <div className="mt-3 h-3 overflow-hidden rounded-full bg-slate-100">
               <div
                 className="h-full rounded-full bg-emerald-600"
@@ -255,7 +288,6 @@ ${verification}
       {/* Symptoms and causes */}
       <section className="mt-6 grid gap-6 md:grid-cols-2">
 
-        {/* Symptoms */}
         <article className="rounded-2xl border border-emerald-100 bg-white p-6">
 
           <h2 className="text-xl font-bold text-emerald-900">
@@ -278,7 +310,6 @@ ${verification}
 
         </article>
 
-        {/* Cause */}
         <article className="rounded-2xl border border-emerald-100 bg-white p-6">
 
           <h2 className="text-xl font-bold text-emerald-900">
@@ -316,37 +347,20 @@ ${verification}
 
       </section>
 
-      {/* Logic verification */}
-      <section className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-6">
+      {/* Interactive truth table component */}
+      <TruthTableCard
+        initialDiseaseDetected={status === 'Diseased'}
+        verificationStatus={verification}
+        flags={logicFlags}
+      />
 
-        <h2 className="text-xl font-bold text-amber-900">
-          Logic Verification
-        </h2>
+      {/* Markdown report component */}
+      <MarkdownReport
+        markdown={markdown}
+        isDemo={isDemo}
+      />
 
-        <p className="mt-3 text-amber-800">
-          {verification}
-        </p>
-
-      </section>
-
-      {/* Detailed Markdown report */}
-      <section className="mt-6 rounded-2xl border border-emerald-100 bg-white p-6">
-
-        <h2 className="mb-5 text-xl font-bold text-emerald-900">
-          Detailed Diagnosis Report
-        </h2>
-
-        <div className="space-y-3 text-slate-700 [&_h2]:mt-5 [&_h2]:text-lg [&_h2]:font-bold [&_ul]:list-disc [&_ul]:pl-5 [&_li]:mb-2">
-
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {markdown}
-          </ReactMarkdown>
-
-        </div>
-
-      </section>
-
-      {/* Navigation buttons */}
+      {/* Navigation */}
       <div className="mt-8 flex flex-wrap gap-4">
 
         <button
