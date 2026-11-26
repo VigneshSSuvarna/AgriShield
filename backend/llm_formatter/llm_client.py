@@ -1,11 +1,12 @@
 import json
+import logging
 import os
 import time
 from pathlib import Path
 from typing import Any, Dict, Tuple
 
 from dotenv import load_dotenv
-from openai import OpenAI
+from openai import APIConnectionError, APIError, APITimeoutError, OpenAI, RateLimitError
 
 try:
     from backend.llm_formatter.prompt_templates import (
@@ -23,6 +24,8 @@ except ImportError:
             assemble_markdown_report,
             build_diagnosis_messages,
         )
+
+logger = logging.getLogger(__name__)
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BACKEND_DIR / ".env", override=True)
@@ -52,42 +55,43 @@ def _resolve_provider_config() -> Tuple[str, str, str]:
 
 
 def get_llm_client() -> OpenAI:
-    """Returns a singleton OpenAI-compatible client."""
+    """Returns a singleton OpenAI-compatible client with fast failover settings."""
     global _CLIENT
     if _CLIENT is None:
         api_key, base_url, _ = _resolve_provider_config()
+        timeout_sec = float(os.getenv("LLM_TIMEOUT", "1.8"))
         _CLIENT = OpenAI(
             api_key=api_key,
             base_url=base_url,
-            timeout=10.0,
-            max_retries=1,
+            timeout=timeout_sec,
+            max_retries=0,
             default_headers={
                 "HTTP-Referer": os.getenv("FRONTEND_URL", "http://localhost:5173"),
                 "X-Title": "AgriShield Crop Expert System",
-    },
-)
+            },
+        )
     return _CLIENT
 
 
 def _fallback_shap_bullets(contract_data: Dict[str, Any]) -> str:
-    """Deterministic fallback if free-tier API hits 429 rate limits."""
+    """Deterministic fallback if external LLM API times out, rate-limits, or has no key."""
     lines = []
     for item in contract_data.get("shap_drivers", []):
         feat = item.get("feature", "Sensor")
         impact = float(item.get("impact", 0.0))
         direction = "positive protective driver" if impact >= 0 else "negative risk contributor"
         lines.append(f"- **{feat} ({impact:+.2f}):** Primary {direction} for crop status.")
-    return "\n".join(lines)
+    return "\n".join(lines) or "- **Sensors (0.00):** No dominant risk drivers reported."
 
 
 def format_diagnosis_markdown(contract_data: Dict[str, Any]) -> Tuple[str, float]:
-    """Converts a diagnosis contract dict into strict Markdown in < 2.0s."""
-    client = get_llm_client()
-    _, _, model = _resolve_provider_config()
-    messages = build_diagnosis_messages(contract_data)
-
+    """Converts a diagnosis contract dict into strict Markdown with automatic fallback."""
     start_time = time.perf_counter()
     try:
+        client = get_llm_client()
+        _, _, model = _resolve_provider_config()
+        messages = build_diagnosis_messages(contract_data)
+
         response = client.chat.completions.create(
             model=model,
             messages=messages,
@@ -96,15 +100,16 @@ def format_diagnosis_markdown(contract_data: Dict[str, Any]) -> Tuple[str, float
         )
         raw_bullets = (response.choices[0].message.content or "").strip()
         if not raw_bullets:
-            raw_bullets = _fallback_shap_bullets(contract_data)
+            raise ValueError("Empty LLM response")
         source_tag = model
-    except Exception as e:
+    except (APITimeoutError, RateLimitError, APIConnectionError, APIError, ValueError, Exception) as e:
         raw_bullets = _fallback_shap_bullets(contract_data)
-        source_tag = f"fallback ({type(e).__name__})"
+        source_tag = f"deterministic-fallback ({type(e).__name__})"
+        logger.warning("LLM formatting failed (%s); using deterministic fallback.", type(e).__name__)
 
     full_markdown = assemble_markdown_report(contract_data, raw_bullets)
     latency = time.perf_counter() - start_time
-    print(f"\n")
+    logger.info("Formatted diagnosis via %s in %.3fs", source_tag, latency)
     return full_markdown, latency
 
 
@@ -113,7 +118,6 @@ if __name__ == "__main__":
     with open(mock_file, "r", encoding="utf-8") as f:
         mock_contract = json.load(f)
 
-    get_llm_client()
     markdown_output, elapsed = format_diagnosis_markdown(mock_contract)
 
     print(markdown_output)
