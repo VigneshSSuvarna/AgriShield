@@ -59,13 +59,13 @@ def get_llm_client() -> OpenAI:
         _CLIENT = OpenAI(
             api_key=api_key,
             base_url=base_url,
-            timeout=1.8,
-            max_retries=0,
+            timeout=10.0,
+            max_retries=1,
             default_headers={
-                "HTTP-Referer": "http://localhost:5173",
+                "HTTP-Referer": os.getenv("FRONTEND_URL", "http://localhost:5173"),
                 "X-Title": "AgriShield Crop Expert System",
-            },
-        )
+    },
+)
     return _CLIENT
 
 
